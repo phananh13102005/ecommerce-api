@@ -1,0 +1,93 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../generated/prisma"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Role {
+  roleid   Int    @id @default(autoincrement())
+  rolename String @db.VarChar(50)
+
+  users User[]
+
+  @@map("Role")
+}
+
+model Membership {
+  mid   Int    @id @default(autoincrement())
+  mname String @db.VarChar(50)
+  score Int
+
+  users User[]
+
+  @@map("Membership")
+}
+
+model User {
+  uid      Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(50)
+  fullname String @db.VarChar(100)
+  password String @db.VarChar(255)
+
+  roleid Int
+  mid    Int
+
+  role       Role       @relation(fields: [roleid], references: [roleid])
+  membership Membership @relation(fields: [mid], references: [mid])
+
+  orders Order[]
+
+  @@map("User")
+}
+
+model Product {
+  pid      Int     @id @default(autoincrement())
+  name     String  @db.VarChar(100)
+  price    Decimal @db.Decimal(10, 2)
+  quantity Int
+
+  orderDetails OrderDetail[]
+
+  @@map("Product")
+}
+
+model Order {
+  oid       Int      @id @default(autoincrement())
+  uid       Int
+  createdat DateTime @default(now()) @map("creatat") @db.Timestamp(3)
+
+  user         User          @relation(fields: [uid], references: [uid])
+  orderDetails OrderDetail[]
+  shipments    Shipment[]
+
+  @@map("Order")
+}
+
+model OrderDetail {
+  oid        Int
+  pid        Int
+  qty        Int
+  unit_price Decimal @db.Decimal(10, 2)
+
+  order   Order   @relation(fields: [oid], references: [oid])
+  product Product @relation(fields: [pid], references: [pid])
+
+  @@id([oid, pid])
+  @@map("OrderDetail")
+}
+
+model Shipment {
+  shipid Int    @id @default(autoincrement())
+  oid    Int
+  status String @db.VarChar(50)
+
+  order Order @relation(fields: [oid], references: [oid])
+
+  @@map("Shipment")
+}

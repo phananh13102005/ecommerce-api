@@ -1,0 +1,11 @@
+ALTER TABLE "Membership"
+RENAME COLUMN "discount" TO "score";
+
+ALTER TABLE "Membership"
+ALTER COLUMN "score"
+TYPE INTEGER
+USING ROUND("score")::INTEGER;
+
+ALTER TABLE "Membership"
+ALTER COLUMN "mname"
+TYPE VARCHAR(50);

@@ -1,0 +1,13 @@
+﻿node_modules/
+.env
+dist/
+coverage/
+npm-debug.log*
+generated/prisma/
+server.log
+server-error.log
+backup_before_erd.sql
+.claude/
+.windsurf/
+skills-lock.json
+.agents/
